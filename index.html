@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Ser Galgos - Adopt a Greyhound</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@600&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #F97316;
+            --color-primary-hover: #EA580C;
+            --color-primary-light: #FFF7ED;
+            --color-primary-dark-hover: #FB923C;
+            /* orange-400 for hover */
+
+            --color-text-heading: #111827;
+            /* gray-900 */
+            --color-text-body: #423131;
+            --color-text-muted: #6B7280;
+            /* gray-500 */
+            --color-text-inverted: #D1D5DB;
+            /* gray-300 */
+            --color-text-on-primary: #FFFFFF;
+
+            --color-background: #FFFFFF;
+            --color-surface: #FFFFFF;
+            --color-border: #E5E7EB;
+            /* gray-200 */
+
+            --color-footer-bg: #1F2937;
+            /* gray-800 */
+            --color-footer-border: #374151;
+            /* gray-700 */
+        }
+    </style>
+    <script>
+        // Configure Tailwind to use CSS variables and custom fonts
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['IBM Plex Serif', 'serif'],
+                    },
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        'primary-hover': 'var(--color-primary-hover)',
+                        'primary-light': 'var(--color-primary-light)',
+                        'primary-dark-hover': 'var(--color-primary-dark-hover)',
+                        'text-heading': 'var(--color-text-heading)',
+                        'text-body': 'var(--color-text-body)',
+                        'text-muted': 'var(--color-text-muted)',
+                        'text-inverted': 'var(--color-text-inverted)',
+                        'text-on-primary': 'var(--color-text-on-primary)',
+                        background: 'var(--color-background)',
+                        surface: 'var(--color-surface)',
+                        border: 'var(--color-border)',
+                        'footer-bg': 'var(--color-footer-bg)',
+                        'footer-border': 'var(--color-footer-border)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background font-sans pb-20 md:pb-0">
+
+    <!-- Header with Desktop Navigation and Donate Button -->
+    <header class="bg-surface shadow-sm sticky top-0 z-20">
+        <div class="max-w-5xl mx-auto px-4 flex justify-between items-center h-[72px]">
+            <!-- Logo -->
+            <div class="font-serif font-semibold text-2xl">
+                <a href="#inicio"><span class="text-text-heading">Ser</span><span class="text-primary">Galgos</span></a>
+            </div>
+
+            <!-- Nav & Donate Button Container -->
+            <div class="flex items-center gap-4 md:gap-6">
+                <!-- Desktop Navigation -->
+                <nav id="nav-desktop" class="hidden md:flex items-center gap-6">
+                    <a href="#inicio"
+                        class="font-sans font-medium text-text-heading hover:text-primary transition-colors">Inicio</a>
+                    <a href="#adoptar"
+                        class="font-sans font-medium text-text-muted hover:text-primary transition-colors">Adoptar</a>
+                    <a href="#nosotros"
+                        class="font-sans font-medium text-text-muted hover:text-primary transition-colors">Nosotros</a>
+                    <a href="#contacto"
+                        class="font-sans font-medium text-text-muted hover:text-primary transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Donate Button (Visible on all sizes) -->
+                <a href="#donar"
+                    class="inline-flex items-center justify-center bg-primary text-text-on-primary font-bold py-2 px-4 rounded-full hover:bg-primary-hover transition-colors cursor-pointer text-sm">
+                    Donar
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto">
+        <main>
+            <!-- Hero Section -->
+            <section id="inicio" class="scroll-mt-20 relative overflow-hidden">
+                <div class="px-4">
+                    <div
+                        class="relative flex flex-col justify-center min-h-[400px] md:flex-row md:items-center md:min-h-0">
+
+                        <!-- Text Content -->
+                        <div class="w-full md:w-1/2 py-4 relative z-10 md:order-1">
+                            <div>
+                                <h1 class="font-serif font-semibold text-[clamp(40px,8vw,60px)] leading-tight">
+                                    <span class="text-text-heading">¿Querés<br>adoptar un<br></span><span
+                                        class="text-primary">galgo?</span>
+                                </h1>
+                            </div>
+                            <div class="mt-1 max-w-[350px]">
+                                <p class="font-sans font-normal text-text-body text-base leading-6">Te ayudamos a
+                                    encontrar el compañero perfecto y a transformar su vida para siempre.</p>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#proceso"
+                                    class="inline-flex items-center justify-center bg-primary text-text-on-primary font-bold py-2 px-6 rounded-full hover:bg-primary-hover transition-colors cursor-pointer">
+                                    Aprendé cómo adoptar
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <!-- Image Container for Desktop -->
+                        <div class="hidden md:block md:w-1/2 md:order-2">
+                            <img src="/galgo-hero.png" alt="Ilustración de un galgo"
+                                class="w-full h-auto max-h-[500px] object-contain">
+                        </div>
+                    </div>
+                </div>
+                <!-- Image for Mobile (absolute, overflows) -->
+                <div class="absolute top-0 right-0 w-3/5 h-full z-0 md:hidden">
+                    <img src="/galgo-hero.png" alt="Ilustración de un galgo"
+                        class="absolute right-[-110px] sm:right-[20px] top-1/2 -translate-y-[148px] h-[100%] sm:-translate-y-[180px] w-auto max-w-none transition-all duration-300">
+                </div>
+            </section>
+
+            <!-- About Us Section -->
+            <section id="nosotros" class="px-4 py-8 md:py-12 scroll-mt-20">
+                <div>
+                    <h2 class="font-sans font-bold text-text-heading text-2xl leading-7">Somos Ser Galgos</h2>
+                    <p class="mt-4 font-sans font-normal text-text-heading text-base leading-6">
+                        Somos una organización sin fines de lucro dedicada a rescatar y reubicar galgos. Nuestra misión
+                        es encontrar
+                        hogares amorosos para estos gigantes gentiles, asegurando que vivan vidas felices y plenas.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="p-4 md:py-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="flex items-center gap-3 p-4 w-full bg-surface rounded-lg border border-border">
+                        <img src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-1.svg" class="w-6 h-6"
+                            alt="Icono de Refugio" />
+                        <span class="font-sans font-bold text-text-heading text-base leading-5">Refugio Seguro</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 w-full bg-surface rounded-lg border border-border">
+                        <img src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-3.svg" class="w-6 h-6"
+                            alt="Icono de Cuidado" />
+                        <span class="font-sans font-bold text-text-heading text-base leading-5">Cuidado Compasivo</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 w-full bg-surface rounded-lg border border-border">
+                        <img src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-4.svg" class="w-6 h-6"
+                            alt="Icono de Comunidad" />
+                        <span class="font-sans font-bold text-text-heading text-base leading-5">Apoyo de la
+                            Comunidad</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Adoption Process Section -->
+            <section id="proceso" class="px-4 py-8 md:py-12 scroll-mt-20">
+                <div>
+                    <h2 class="font-sans font-bold text-text-heading text-2xl leading-7 mb-6">El Proceso de Adopción
+                    </h2>
+                    <div class="flex flex-col">
+                        <div class="flex items-start gap-2">
+                            <img class="w-10 h-auto flex-shrink-0"
+                                src="https://c.animaapp.com/md6hg0hm7ohV8F/img/depth-4--frame-0-3.svg"
+                                alt="Icono de Contacto" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Contactanos</h3>
+                                <p class="font-sans font-normal text-text-muted text-base leading-6">Contactanos para
+                                    comenzar
+                                    tu viaje de adopción.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <img class="w-10 h-auto flex-shrink-0"
+                                src="https://c.animaapp.com/md6hg0hm7ohV8F/img/depth-4--frame-0.svg"
+                                alt="Icono de Conversación" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Charla y
+                                    entendimiento
+                                    mutuo</h3>
+                                <p class="font-sans font-normal text-text-muted text-base leading-6">Discutiremos tu
+                                    estilo de
+                                    vida y preferencias.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <img class="w-10 h-auto flex-shrink-0"
+                                src="https://c.animaapp.com/md6hg0hm7ohV8F/img/depth-4--frame-0-2.svg"
+                                alt="Icono de Encuentro" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Encuentro con un
+                                    galgo
+                                </h3>
+                                <p class="font-sans font-normal text-text-muted text-base leading-6">Conocé posibles
+                                    compañeros y encontrá tu pareja perfecta.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <img class="w-10 h-auto flex-shrink-0"
+                                src="https://c.animaapp.com/md6hg0hm7ohV8F/img/depth-4--frame-0-1.svg"
+                                alt="Icono de Prueba" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Período de
+                                    prueba</h3>
+                                <p class="font-sans font-normal text-text-muted text-base leading-6">Pasá tiempo con tu
+                                    galgo
+                                    elegido para asegurar un buen ajuste.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <img class="w-10 h-auto flex-shrink-0"
+                                src="https://c.animaapp.com/md6hg0hm7ohV8F/img/depth-4--frame-0-4.svg"
+                                alt="Icono de Adopción" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Adopción final
+                                </h3>
+                                <p class="font-sans font-normal text-text-muted text-base leading-6">Dale la bienvenida
+                                    a
+                                    tu
+                                    nuevo miembro de la familia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section id="historias" class="px-4 py-8 md:py-12 scroll-mt-20">
+                <div>
+                    <h2 class="font-sans font-bold text-text-heading text-2xl leading-7 mb-6">Historias de las familias
+                    </h2>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex flex-col w-full gap-3">
+                            <img class="w-full h-44 object-cover rounded-xl"
+                                src="https://placehold.co/400x300/FFE4E6/DC2626?text=Luna"
+                                alt="Un galgo llamado Luna" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Malvina</h3>
+                                <p class="font-sans font-normal text-text-muted text-sm leading-[21px]">"Luna ha traído
+                                    tanta alegría a nuestras vidas. Es la perra más dulce que podríamos pedir."</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col w-full gap-3">
+                            <img class="w-full h-44 object-cover rounded-xl"
+                                src="https://placehold.co/400x300/E0E7FF/4F46E5?text=Max" alt="Un galgo llamado Max" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Macarena</h3>
+                                <p class="font-sans font-normal text-text-muted text-sm leading-[21px]">"Max se adaptó
+                                    rápidamente a nuestro hogar y ahora es un miembro querido de nuestra familia."</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col w-full gap-3">
+                            <img class="w-full h-44 object-cover rounded-xl"
+                                src="https://placehold.co/400x300/D1FAE5/059669?text=Bella"
+                                alt="Un galgo llamado Bella" />
+                            <div>
+                                <h3 class="font-sans font-medium text-text-heading text-base leading-6">Fulci</h3>
+                                <p class="font-sans font-normal text-text-muted text-sm leading-[21px]">"La naturaleza
+                                    gentil y la personalidad amorosa de Bella la han convertido en una favorita
+                                    instantánea."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section id="adoptar" class="p-4 md:py-12 scroll-mt-20">
+                <div>
+                    <div class="flex flex-col items-start gap-4 p-5 w-full bg-surface rounded-xl border border-primary">
+                        <p class="font-sans font-bold text-text-heading text-base leading-5">Muchos galgos están
+                            esperando
+                            encontrar su hogar ideal. ¿Querés sumar un nuevo miembro a tu familia?</p>
+                        <button
+                            class="inline-flex items-center justify-center bg-primary text-text-on-primary text-sm font-medium py-1.5 px-4 rounded-2xl hover:bg-primary-hover transition-colors cursor-pointer">
+                            Quiero adoptar
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-footer-bg text-text-inverted py-12 scroll-mt-20">
+        <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-serif font-semibold text-text-on-primary text-lg">SerGalgos</h3>
+                <p class="mt-2 text-sm">Transformando vidas, un galgo a la vez.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-text-on-primary text-lg">Contacto</h3>
+                <ul class="mt-2 space-y-2 text-sm">
+                    <li>Email: <a href="mailto:info@sergalgos.com"
+                            class="hover:text-primary-dark-hover">info@sergalgos.com</a></li>
+                    <li>Teléfono: <a href="tel:+5491123456789" class="hover:text-primary-dark-hover">+54 9 11
+                            2345-6789</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-semibold text-text-on-primary text-lg">Seguinos</h3>
+                <div class="flex mt-2 space-x-4">
+                    <a href="#" class="text-text-inverted hover:text-primary-dark-hover">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-text-inverted hover:text-primary-dark-hover">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.012 3.584-.07 4.85c-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.012-3.584.07-4.85c.148-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.644-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-5xl mx-auto px-4 mt-8 border-t border-footer-border pt-8 text-center text-sm">
+            <p>&copy; 2025 Ser Galgos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav id="nav-mobile" class="fixed bottom-0 left-0 right-0 bg-surface md:hidden border-t border-border z-10">
+        <div class="flex items-start gap-2 p-3 w-full">
+            <a href="#inicio"
+                class="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors">
+                <div class="flex items-center justify-center h-6"><img
+                        src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-5.svg" class="w-6 h-6"
+                        alt="Icono de Inicio" /></div>
+                <span class="font-sans font-medium text-xs leading-[18px] text-center text-text-heading">Inicio</span>
+            </a>
+            <a href="#adoptar"
+                class="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors hover:bg-primary-light">
+                <div class="flex items-center justify-center h-6"><img
+                        src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-2.svg" class="w-6 h-6"
+                        alt="Icono de Adoptar" /></div>
+                <span class="font-sans font-medium text-xs leading-[18px] text-center text-text-muted">Adoptar</span>
+            </a>
+            <a href="#nosotros"
+                class="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors hover:bg-primary-light">
+                <div class="flex items-center justify-center h-6"><img
+                        src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0-4.svg" class="w-6 h-6"
+                        alt="Icono de Nosotros" /></div>
+                <span class="font-sans font-medium text-xs leading-[18px] text-center text-text-muted">Nosotros</span>
+            </a>
+            <a href="#contacto"
+                class="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors hover:bg-primary-light">
+                <div class="flex items-center justify-center h-6"><img
+                        src="https://c.animaapp.com/md6hg0hm7ohV8F/img/vector---0.svg" class="w-6 h-6"
+                        alt="Icono de Contacto" /></div>
+                <span class="font-sans font-medium text-xs leading-[18px] text-center text-text-muted">Contacto</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section[id], footer[id]');
+            const desktopNavLinks = document.querySelectorAll('#nav-desktop a');
+            const mobileNavLinks = document.querySelectorAll('#nav-mobile a');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4 // Adjusted threshold
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+
+                        // Update desktop nav using Tailwind classes
+                        desktopNavLinks.forEach(link => {
+                            link.classList.remove('text-primary', 'text-text-heading');
+                            link.classList.add('text-text-muted');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('text-primary');
+                                link.classList.remove('text-text-muted');
+                            }
+                        });
+
+                        const homeLinkDesktop = document.querySelector('#nav-desktop a[href="#inicio"]');
+                        if (id === 'inicio') {
+                            homeLinkDesktop.classList.add('text-text-heading');
+                            homeLinkDesktop.classList.remove('text-text-muted', 'text-primary');
+                        }
+
+
+                        // Update mobile nav using Tailwind classes
+                        mobileNavLinks.forEach(link => {
+                            link.classList.remove('bg-primary-light');
+                            const span = link.querySelector('span');
+                            span.classList.remove('text-text-heading');
+                            span.classList.add('text-text-muted');
+
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('bg-primary-light');
+                                span.classList.remove('text-text-muted');
+                                span.classList.add('text-text-heading');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+
+</html>
