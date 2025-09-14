@@ -18,7 +18,7 @@ export default function MobileNav() {
           </div>
           <span className="font-sans font-medium text-xs leading-[18px] text-center text-gray-500">Adoptar</span>
         </Link>
-        <Link href="/shop" className="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors hover:bg-sky-50">
+        <Link href="/tienda" className="flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-lg transition-colors hover:bg-sky-50">
           <div className="flex items-center justify-center h-6">
             <Store className="w-6 h-6 text-text-body" />
           </div>

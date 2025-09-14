@@ -25,7 +25,7 @@ export default function Header() {
               <Link href="/adoptar">
                 Adoptar
               </Link>
-              <Link href="/shop">
+              <Link href="/tienda">
                 Tienda
               </Link>
             </nav>
