@@ -53,8 +53,8 @@ export async function GET() {
     // Fetch CSV data with cache tag for revalidation
     const response = await fetch(csvUrl, {
       next: { 
-        tags: ['stories'],
-        revalidate: 300 // 5 minutes default cache
+        tags: ['stories']
+        // No revalidate time = cache indefinitely until manual revalidation
       },
       redirect: 'follow', // Explicitly follow redirects
       headers: {
