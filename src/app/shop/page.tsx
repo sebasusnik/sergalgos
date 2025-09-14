@@ -3,7 +3,11 @@ import { Product } from '../contexts/cart-context'
 
 async function fetchProducts(): Promise<Product[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+    // Determinar la URL base correcta
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    
+    const response = await fetch(`${baseUrl}/api/products`, {
       cache: 'no-store'
     })
     
