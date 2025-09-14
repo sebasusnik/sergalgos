@@ -39,8 +39,8 @@ interface CartState {
 
 type CartAction =
   | { type: 'ADD_ITEM'; payload: { product: Product; selectedColor?: string } }
-  | { type: 'REMOVE_ITEM'; payload: string }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
+  | { type: 'REMOVE_ITEM'; payload: { id: string; selectedColor?: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { id: string; selectedColor?: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD_CART'; payload: CartItem[] }
 
@@ -84,7 +84,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
     
     case 'REMOVE_ITEM': {
-      const newItems = state.items.filter(item => item.id !== action.payload)
+      const newItems = state.items.filter(item => 
+        !(item.id === action.payload.id && item.selectedColor === action.payload.selectedColor)
+      )
       return {
         items: newItems,
         total: calculateTotal(newItems),
@@ -94,9 +96,11 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     
     case 'UPDATE_QUANTITY': {
       const newItems = action.payload.quantity <= 0
-        ? state.items.filter(item => item.id !== action.payload.id)
+        ? state.items.filter(item => 
+            !(item.id === action.payload.id && item.selectedColor === action.payload.selectedColor)
+          )
         : state.items.map(item =>
-            item.id === action.payload.id
+            item.id === action.payload.id && item.selectedColor === action.payload.selectedColor
               ? { ...item, quantity: action.payload.quantity }
               : item
           )
@@ -126,8 +130,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 interface CartContextValue extends CartState {
   addItem: (product: Product, selectedColor?: string) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
+  removeItem: (id: string, selectedColor?: string) => void
+  updateQuantity: (id: string, selectedColor: string | undefined, quantity: number) => void
   clearCart: () => void
 }
 
@@ -156,12 +160,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'ADD_ITEM', payload: { product, selectedColor } })
   }
 
-  const removeItem = (id: string) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: id })
+  const removeItem = (id: string, selectedColor?: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { id, selectedColor } })
   }
 
-  const updateQuantity = (id: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } })
+  const updateQuantity = (id: string, selectedColor: string | undefined, quantity: number) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, selectedColor, quantity } })
   }
 
   const clearCart = () => {

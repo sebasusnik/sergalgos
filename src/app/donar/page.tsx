@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useState } from 'react'
 
 const donationSchema = z.object({
   amount: z.number().min(100, 'El monto mínimo es $100').max(1000000, 'El monto máximo es $1.000.000'),
@@ -13,6 +14,8 @@ const donationSchema = z.object({
 type DonationFormData = z.infer<typeof donationSchema>
 
 export default function DonarPage(): React.ReactElement {
+  const [error, setError] = useState<string | null>(null)
+  
   const suggestedAmounts = [
     { amount: 5000, description: "Comida por una semana" },
     { amount: 10000, description: "Vacunas y desparasitación" },
@@ -52,12 +55,46 @@ export default function DonarPage(): React.ReactElement {
 
   const onSubmit = async (data: DonationFormData) => {
     try {
-      // Aquí integrarías con MercadoPago
-      console.log('Donation data:', data)
-      alert(`¡Gracias! Procesando donación de $${data.amount.toLocaleString()} (${data.donationType === 'monthly' ? 'mensual' : 'única'})`)
+      setError(null)
+      
+      const response = await fetch('/api/donations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: data.amount,
+          donationType: data.donationType,
+          donorInfo: {
+            // You could extend the form to collect donor info
+            name: 'Donante Anónimo',
+            email: 'donante@example.com'
+          }
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error procesando la donación')
+      }
+
+      if (result.fallback_action === 'contact_whatsapp') {
+        // Handle monthly donations fallback
+        const whatsappMessage = encodeURIComponent(
+          `Hola! Me interesa hacer una donación mensual de $${data.amount.toLocaleString()}. ¿Podrían ayudarme con el proceso?`
+        )
+        window.open(`https://wa.me/5491123456789?text=${whatsappMessage}`, '_blank')
+        return
+      }
+
+      // Redirect to MercadoPago
+      if (result.init_point) {
+        window.location.href = result.init_point
+      }
     } catch (error) {
       console.error('Error processing donation:', error)
-      alert('Error procesando la donación. Por favor intentá de nuevo.')
+      setError(error instanceof Error ? error.message : 'Error procesando la donación. Por favor intentá de nuevo.')
     }
   }
 
@@ -170,6 +207,15 @@ export default function DonarPage(): React.ReactElement {
               </div>
             )}
 
+            {/* API Error */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">
+                  {error}
+                </p>
+              </div>
+            )}
+
             {/* Form Validation Error */}
             {Object.keys(errors).length > 0 && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -186,7 +232,7 @@ export default function DonarPage(): React.ReactElement {
                 disabled={!isValid || isSubmitting || watchAmount === 0}
                 className={`w-full font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                   isValid && !isSubmitting && watchAmount > 0
-                    ? 'bg-primary text-text-on-primary hover:bg-primary-hover'
+                    ? 'bg-blue-400 text-text-on-primary hover:bg-blue-500'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >

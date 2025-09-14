@@ -1,7 +1,8 @@
 'use client'
 
 import { useCart } from '../contexts/cart-context'
-import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react'
+import { ShoppingCart, Minus, Plus, Trash2, MessageCircle } from 'lucide-react'
+import { openWhatsAppCheckout } from '../lib/whatsapp-checkout'
 import {
   Sheet,
   SheetContent,
@@ -14,12 +15,20 @@ import {
 export default function Cart() {
   const { items, total, itemCount, updateQuantity, removeItem, clearCart } = useCart()
 
-  const handleQuantityChange = (id: string, newQuantity: number) => {
+  const handleQuantityChange = (id: string, selectedColor: string | undefined, newQuantity: number) => {
     if (newQuantity <= 0) {
-      removeItem(id)
+      removeItem(id, selectedColor)
     } else {
-      updateQuantity(id, newQuantity)
+      updateQuantity(id, selectedColor, newQuantity)
     }
+  }
+
+  const handleWhatsAppCheckout = () => {
+    const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '5491123456789'
+    openWhatsAppCheckout(items, total, {
+      phoneNumber,
+      greeting: 'Hola! Me interesa comprar los siguientes productos:'
+    })
   }
 
   return (
@@ -53,7 +62,7 @@ export default function Cart() {
             <div className="space-y-4">
               {items.map((item) => (
                 <div
-                  key={item.id}
+                  key={`${item.id}-${item.selectedColor || 'default'}`}
                   className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border"
                 >
                   <img
@@ -78,7 +87,7 @@ export default function Cart() {
                     {/* Quantity Controls */}
                     <div className="flex items-center gap-2 mt-2">
                       <button
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                        onClick={() => handleQuantityChange(item.id, item.selectedColor, item.quantity - 1)}
                         className="p-1 hover:bg-primary-light rounded transition-colors"
                       >
                         <Minus className="w-3 h-3 text-text-heading" />
@@ -89,7 +98,7 @@ export default function Cart() {
                       </span>
                       
                       <button
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        onClick={() => handleQuantityChange(item.id, item.selectedColor, item.quantity + 1)}
                         className="p-1 hover:bg-primary-light rounded transition-colors"
                       >
                         <Plus className="w-3 h-3 text-text-heading" />
@@ -102,7 +111,7 @@ export default function Cart() {
                       ${(item.price * item.quantity).toLocaleString()}
                     </p>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item.id, item.selectedColor)}
                       className="p-1 hover:bg-red-100 rounded transition-colors mt-1"
                     >
                       <Trash2 className="w-3 h-3 text-red-500" />
@@ -130,8 +139,12 @@ export default function Cart() {
                 </button>
               </div>
               
-              <button className="w-full bg-primary text-text-on-primary font-bold py-3 px-6 rounded-full hover:bg-primary-hover transition-colors">
-                Proceder al pago
+              <button 
+                onClick={handleWhatsAppCheckout}
+                className="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Comprar por WhatsApp
               </button>
               
               <p className="text-center text-text-muted text-xs">
