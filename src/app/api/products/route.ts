@@ -98,8 +98,8 @@ export async function GET() {
     // Fetch CSV data with cache tag for revalidation
     const response = await fetch(csvUrl, {
       next: { 
-        tags: ['products'],
-        revalidate: 60 // 1 minute cache for faster updates
+        tags: ['products']
+        // No revalidate time = cache indefinitely until manual revalidation
       },
       redirect: 'follow', // Explicitly follow redirects
       headers: {
