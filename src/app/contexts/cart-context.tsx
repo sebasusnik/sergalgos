@@ -18,6 +18,14 @@ export interface Product {
   colors?: ProductColor[]
 }
 
+export interface FamilyStory {
+  id: string
+  dogName: string
+  ownerName: string
+  testimonial: string
+  image: string
+}
+
 export interface CartItem extends Product {
   quantity: number
   selectedColor?: string

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FamilyStories } from './components/family-stories'
 
 export default function Home(): React.ReactElement {
   return (
@@ -196,61 +197,7 @@ export default function Home(): React.ReactElement {
 
           {/* Testimonials Section */}
           <section id="historias" className="px-4 py-8 md:py-12 scroll-mt-20">
-            <div>
-              <h2 className="font-sans font-bold text-text-heading text-2xl leading-7 mb-6">
-                Historias de las familias
-              </h2>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col w-full gap-3">
-                  <img
-                    className="w-full h-44 object-cover rounded-xl"
-                    src="https://placehold.co/400x300/FFE4E6/DC2626?text=Luna"
-                    alt="Un galgo llamado Luna"
-                  />
-                  <div>
-                    <h3 className="font-sans font-medium text-text-heading text-base leading-6">
-                      Malvina
-                    </h3>
-                    <p className="font-sans font-normal text-text-muted text-sm leading-[21px]">
-                      "Luna ha traído tanta alegría a nuestras vidas. Es la perra más dulce que
-                      podríamos pedir."
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col w-full gap-3">
-                  <img
-                    className="w-full h-44 object-cover rounded-xl"
-                    src="https://placehold.co/400x300/E0E7FF/4F46E5?text=Max"
-                    alt="Un galgo llamado Max"
-                  />
-                  <div>
-                    <h3 className="font-sans font-medium text-text-heading text-base leading-6">
-                      Macarena
-                    </h3>
-                    <p className="font-sans font-normal text-text-muted text-sm leading-[21px]">
-                      "Max se adaptó rápidamente a nuestro hogar y ahora es un miembro querido de
-                      nuestra familia."
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col w-full gap-3">
-                  <img
-                    className="w-full h-44 object-cover rounded-xl"
-                    src="https://placehold.co/400x300/D1FAE5/059669?text=Bella"
-                    alt="Un galgo llamado Bella"
-                  />
-                  <div>
-                    <h3 className="font-sans font-medium text-text-heading text-base leading-6">
-                      Fulci
-                    </h3>
-                    <p className="font-sans font-normal text-text-muted text-sm leading-[21px]">
-                      "La naturaleza gentil y la personalidad amorosa de Bella la han convertido en
-                      una favorita instantánea."
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <FamilyStories />
           </section>
 
           {/* CTA Section */}

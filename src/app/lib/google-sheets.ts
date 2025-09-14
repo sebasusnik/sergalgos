@@ -2,8 +2,9 @@ import { Product } from '../contexts/cart-context'
 
 export async function fetchProductsFromSheet(): Promise<Product[]> {
   try {
-    const response = await fetch('/api/products', {
-      cache: 'no-store' // Always fetch fresh data
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const response = await fetch(`${baseUrl}/api/products`, {
+      next: { revalidate: 3600 } // Revalidate every hour
     })
     
     if (!response.ok) {
