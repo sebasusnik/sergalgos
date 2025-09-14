@@ -25,7 +25,7 @@ export async function FamilyStories() {
         {stories.slice(0, 3).map((story) => (
           <div key={story.id} className="flex flex-col w-full gap-3">
             <img
-              className="w-full h-64 object-cover rounded-xl"
+              className="w-full h-96 md:h-72 object-cover rounded-xl"
               src={story.image}
               alt={`Un galgo llamado ${story.dogName}`}
             />

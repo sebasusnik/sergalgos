@@ -79,16 +79,7 @@ export default function DonarPage(): React.ReactElement {
         throw new Error(result.error || 'Error procesando la donación')
       }
 
-      if (result.fallback_action === 'contact_whatsapp') {
-        // Handle monthly donations fallback
-        const whatsappMessage = encodeURIComponent(
-          `Hola! Me interesa hacer una donación mensual de $${data.amount.toLocaleString()}. ¿Podrían ayudarme con el proceso?`
-        )
-        window.open(`https://wa.me/5491123456789?text=${whatsappMessage}`, '_blank')
-        return
-      }
-
-      // Redirect to MercadoPago
+      // Redirect to MercadoPago (works for both one-time donations and subscriptions)
       if (result.init_point) {
         window.location.href = result.init_point
       }

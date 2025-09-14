@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MercadoPagoConfig, Preference } from 'mercadopago'
+import { MercadoPagoConfig, Preference, PreApproval } from 'mercadopago'
 
 // Initialize MercadoPago client
 const client = new MercadoPagoConfig({
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
           failure: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/failure`,
           pending: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/pending`
         },
-        auto_return: 'approved',
+        // auto_return: 'approved',
         notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/donations/webhook`,
         external_reference: `donation_${Date.now()}`,
         expires: true,
@@ -82,14 +82,53 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // For monthly donations, we would need to implement subscriptions
-    // This is more complex and requires additional setup with MercadoPago
+    // For monthly donations, create a subscription using PreApproval
     if (donationType === 'monthly') {
+      // In development, return a mock response for testing UI
+      if (process.env.NODE_ENV === 'development') {
+        return NextResponse.json({
+          id: `mock_subscription_${Date.now()}`,
+          status: 'pending',
+          init_point: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/success?mock=subscription`,
+          external_reference: `monthly_donation_${Date.now()}`,
+          subscription_type: 'monthly',
+          auto_recurring: {
+            frequency: 1,
+            frequency_type: 'months',
+            transaction_amount: amount,
+            currency_id: 'ARS'
+          }
+        })
+      }
+
+      const preApproval = new PreApproval(client)
+
+      // Create subscription data for MercadoPago PreApproval
+      const subscriptionData = {
+        reason: `Donación mensual de $${amount} - Ser Galgos`,
+        external_reference: `monthly_donation_${Date.now()}`,
+        payer_email: donorInfo?.email || 'test_user_123@testuser.com',
+        back_url: `${process.env.NEXT_PUBLIC_BASE_URL}/donar/success`,
+        auto_recurring: {
+          frequency: 1,
+          frequency_type: 'months',
+          start_date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(), // Start tomorrow
+          end_date: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString(), // End in 1 year
+          transaction_amount: amount,
+          currency_id: 'ARS'
+        }
+      }
+
+      const subscription = await preApproval.create({ body: subscriptionData })
+
       return NextResponse.json({
-        error: 'Las donaciones mensuales estarán disponibles próximamente. Por favor, selecciona donación única.',
-        // For now, we could redirect to contact or implement a different flow
-        fallback_action: 'contact_whatsapp'
-      }, { status: 501 })
+        id: subscription.id,
+        status: subscription.status,
+        init_point: subscription.init_point,
+        external_reference: subscription.external_reference,
+        subscription_type: 'monthly',
+        auto_recurring: subscription.auto_recurring
+      })
     }
 
   } catch (error) {

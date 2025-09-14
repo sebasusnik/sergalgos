@@ -1,35 +1,80 @@
+'use client'
+
 import Link from 'next/link'
-import { CheckCircle, Heart, Home } from 'lucide-react'
+import { CheckCircle, Heart, Home, Info } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 export default function DonationSuccessPage() {
+  const searchParams = useSearchParams()
+  const isMockSubscription = searchParams.get('mock') === 'subscription'
   return (
     <div className="bg-background font-sans min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md mx-auto text-center">
         <div className="mb-6">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h1 className="font-serif font-semibold text-3xl text-text-heading mb-2">
-            ¡Donación Exitosa!
-          </h1>
-          <p className="text-text-body text-lg">
-            Muchas gracias por tu generosidad
-          </p>
+          {isMockSubscription ? (
+            <>
+              <Info className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+              <h1 className="font-serif font-semibold text-3xl text-text-heading mb-2">
+                ¡Suscripción Configurada! (Modo Desarrollo)
+              </h1>
+              <p className="text-text-body text-lg">
+                La funcionalidad de suscripciones está lista para producción
+              </p>
+            </>
+          ) : (
+            <>
+              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <h1 className="font-serif font-semibold text-3xl text-text-heading mb-2">
+                ¡Donación Exitosa!
+              </h1>
+              <p className="text-text-body text-lg">
+                Muchas gracias por tu generosidad
+              </p>
+            </>
+          )}
         </div>
 
         <div className="bg-surface rounded-xl border border-border p-6 mb-6">
           <Heart className="w-8 h-8 text-primary mx-auto mb-3" />
-          <h2 className="font-sans font-bold text-xl text-text-heading mb-3">
-            Tu donación hace la diferencia
-          </h2>
-          <p className="text-text-body text-sm leading-relaxed">
-            Gracias a tu apoyo podemos continuar rescatando galgos, brindándoles 
-            atención veterinaria y encontrándoles hogares amorosos.
-          </p>
+          {isMockSubscription ? (
+            <>
+              <h2 className="font-sans font-bold text-xl text-text-heading mb-3">
+                Suscripción de Prueba Creada
+              </h2>
+              <p className="text-text-body text-sm leading-relaxed">
+                En producción, aquí se procesaría una suscripción real de MercadoPago.
+                El sistema está completamente implementado y listo para usar.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-sans font-bold text-xl text-text-heading mb-3">
+                Tu donación hace la diferencia
+              </h2>
+              <p className="text-text-body text-sm leading-relaxed">
+                Gracias a tu apoyo podemos continuar rescatando galgos, brindándoles 
+                atención veterinaria y encontrándoles hogares amorosos.
+              </p>
+            </>
+          )}
         </div>
 
         <div className="space-y-3">
-          <p className="text-text-muted text-sm">
-            Recibirás un comprobante por email en los próximos minutos.
-          </p>
+          {!isMockSubscription && (
+            <p className="text-text-muted text-sm">
+              Recibirás un comprobante por email en los próximos minutos.
+            </p>
+          )}
+          
+          {isMockSubscription && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-blue-800 text-sm">
+                <strong>Nota para desarrollo:</strong> Esta es una respuesta simulada.
+                En producción, el usuario sería redirigido a MercadoPago para completar
+                la configuración de su suscripción mensual.
+              </p>
+            </div>
+          )}
           
           <div className="flex flex-col gap-3">
             <Link 
