@@ -6,6 +6,7 @@ import { RadioGroup } from '../ui/components/radio-group'
 import { Button } from '../ui/components/button'
 import { FormField } from '../ui/components/form-field'
 import { Modal } from '../ui/components/modal'
+import { DropzoneUpload } from '../ui/components/image-uploader/dropzone-upload'
 
 export default function AdoptionPage(): React.ReactElement {
   const [formData, setFormData] = useState({
@@ -27,6 +28,7 @@ export default function AdoptionPage(): React.ReactElement {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [fileError, setFileError] = useState<string>('')
 
   const questions = {
     // Personal Info
@@ -380,13 +382,14 @@ export default function AdoptionPage(): React.ReactElement {
               </FormField>
               
               <FormField id="q24" label={questions.q24}>
-                <Input id="q24" name="q24" type="file" onChange={handleChange} accept="image/*" multiple />
-                <p className="text-xs text-gray-500 mt-1">
-                  {uploadedFiles.length > 0 
-                    ? `${uploadedFiles.length} archivo(s) seleccionado(s): ${uploadedFiles.map(f => f.name).join(', ')}`
-                    : 'Seleccione las fotos del lugar donde vivirá el perro'
-                  }
-                </p>
+                <DropzoneUpload
+                  files={uploadedFiles}
+                  onFilesChange={setUploadedFiles}
+                  error={fileError}
+                  onError={setFileError}
+                  maxSize={5 * 1024 * 1024} // 5MB
+                  maxFiles={10}
+                />
               </FormField>
               
               <FormField id="q25" label={questions.q25}>

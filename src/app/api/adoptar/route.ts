@@ -12,10 +12,35 @@ export async function POST(request: NextRequest) {
     
     for (const [key, value] of formData.entries()) {
       if (key.startsWith('file_')) {
-        files.push(value as File)
+        // Handle File objects and FormDataEntryValue
+        if (value instanceof File) {
+          files.push(value)
+        } else if (typeof value === 'object' && value !== null && 'arrayBuffer' in value) {
+          // Handle other file-like objects that have arrayBuffer method
+          files.push(value as File)
+        } else if (typeof value === 'object' && value !== null && 'name' in value && 'size' in value) {
+          // Handle mobile browser file objects that might not be instanceof File
+          files.push(value as File)
+        }
       } else if (key !== 'fileCount') {
         formFields[key] = value as string
       }
+    }
+
+    // Check total file size to prevent memory issues
+    const totalFileSize = files.reduce((total, file) => total + file.size, 0)
+    const maxTotalSize = 50 * 1024 * 1024 // 50MB total limit
+    
+    if (totalFileSize > maxTotalSize) {
+      throw new Error(`Total file size too large: ${(totalFileSize / 1024 / 1024).toFixed(2)}MB > ${maxTotalSize / 1024 / 1024}MB`)
+    }
+
+    // Check required environment variables
+    if (!process.env.SMTP_USER) {
+      throw new Error('SMTP_USER environment variable is not set')
+    }
+    if (!process.env.SMTP_PASS) {
+      throw new Error('SMTP_PASS environment variable is not set')
     }
 
     // Generate PDF
@@ -168,10 +193,18 @@ export async function POST(request: NextRequest) {
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: false, // true for 465, false for other ports
+      requireTLS: true,
+      tls: {
+        rejectUnauthorized: false
+      },
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      pool: true,
+      maxConnections: 1,
+      debug: false, // Disable debug for cleaner output
+      logger: false
     })
 
     // Prepare attachments array
@@ -185,14 +218,32 @@ export async function POST(request: NextRequest) {
 
     // Add image files as separate attachments
     for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      const buffer = await file.arrayBuffer()
-      const base64 = Buffer.from(buffer).toString('base64')
-      attachments.push({
-        filename: `foto-${i + 1}-${formFields.fullName.replace(/\s+/g, '-')}.${file.name.split('.').pop()}`,
-        content: base64,
-        encoding: 'base64'
-      })
+      try {
+        const file = files[i]
+        
+        // Skip empty files
+        if (!file) {
+          continue
+        }
+        
+        // Check if file has required methods
+        if (!file.arrayBuffer) {
+          continue
+        }
+        
+        const buffer = await file.arrayBuffer()
+        const base64 = Buffer.from(buffer).toString('base64')
+        const fileExtension = file.name ? file.name.split('.').pop() || 'jpg' : 'jpg'
+        const attachment = {
+          filename: `foto-${i + 1}-${formFields.fullName.replace(/\s+/g, '-')}.${fileExtension}`,
+          content: base64,
+          encoding: 'base64'
+        }
+        
+        attachments.push(attachment)
+      } catch (error) {
+        // Continue with other files even if one fails
+      }
     }
 
     // Email content
@@ -214,6 +265,13 @@ export async function POST(request: NextRequest) {
       attachments
     }
 
+    // Verify SMTP connection first
+    try {
+      await transporter.verify()
+    } catch (verifyError) {
+      throw new Error(`SMTP server connection failed: ${verifyError}`)
+    }
+
     // Send email
     await transporter.sendMail(mailOptions)
 
@@ -223,11 +281,11 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error sending email:', error)
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Error al enviar el formulario' 
+        message: error instanceof Error ? error.message : 'Error al enviar el formulario',
+        error: error instanceof Error ? error.stack : String(error)
       },
       { status: 500 }
     )
