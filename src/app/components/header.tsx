@@ -35,7 +35,7 @@ export default function Header() {
 
             {/* Donate Button */}
             <Link
-              href="#donar"
+              href="/donar"
               className="inline-flex items-center justify-center bg-primary text-text-on-primary font-bold py-2 px-4 rounded-full hover:bg-primary-hover transition-colors cursor-pointer text-sm"
             >
               Donar
