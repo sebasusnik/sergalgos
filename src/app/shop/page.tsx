@@ -1,8 +1,26 @@
-import { fetchProductsFromSheet } from '../lib/google-sheets'
 import { ShopClient } from './shop-client'
+import { Product } from '../contexts/cart-context'
+
+async function fetchProducts(): Promise<Product[]> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+      cache: 'no-store'
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.products || []
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    return []
+  }
+}
 
 export default async function Shop() {
-  const products = await fetchProductsFromSheet()
+  const products = await fetchProducts()
 
   return (
     <div className="bg-background font-sans pb-20 md:pb-0">

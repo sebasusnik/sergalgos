@@ -89,15 +89,18 @@ function getMockProducts(): Product[] {
 export async function GET() {
   try {
     const csvUrl = process.env.GOOGLE_SHEETS_CSV_URL
-    
+    console.log('Fetching products CSV from:', csvUrl)
     if (!csvUrl) {
       console.log('No CSV URL configured, using mock data')
       return NextResponse.json({ products: getMockProducts() })
     }
 
-    // Fetch CSV data
+    // Fetch CSV data with cache tag for revalidation
     const response = await fetch(csvUrl, {
-      cache: 'no-store' // Always fetch fresh data
+      next: { 
+        tags: ['products'],
+        revalidate: 300 // 5 minutes default cache
+      }
     })
     
     if (!response.ok) {
@@ -141,9 +144,24 @@ export async function GET() {
         
         if (imagesString) {
           try {
-            images = imagesString.split(',')
+            const parsedImages = imagesString.split(',')
               .map((url: string) => url.trim())
               .filter(Boolean)
+              .filter((url: string) => {
+                // Filter out placeholder images and invalid URLs
+                return !url.includes('/placeholder-') && 
+                       !url.startsWith('/placeholder') &&
+                       url !== '/placeholder-product.jpg' &&
+                       url.length > 5 // Basic URL length check
+              })
+            
+            // Only set images if we have valid images and more than just the main image
+            if (parsedImages.length > 1) {
+              images = parsedImages
+            } else if (parsedImages.length === 1 && parsedImages[0] !== (row.image || row.imagen)) {
+              // Only set images array if the single image is different from the main image
+              images = parsedImages
+            }
           } catch (e) {
             console.warn(`Error parsing images for product ${index + 1}:`, e)
           }

@@ -50,9 +50,12 @@ export async function GET() {
       return NextResponse.json({ stories: getMockStories() })
     }
 
-    // Fetch CSV data from different sheet/tab
+    // Fetch CSV data with cache tag for revalidation
     const response = await fetch(csvUrl, {
-      cache: 'no-store' // Always fetch fresh data
+      next: { 
+        tags: ['stories'],
+        revalidate: 300 // 5 minutes default cache
+      }
     })
     
     if (!response.ok) {

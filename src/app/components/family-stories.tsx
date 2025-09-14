@@ -1,7 +1,25 @@
-import { fetchFamilyStories } from '../lib/family-stories'
+import { FamilyStory } from '../contexts/cart-context'
+
+async function fetchStories(): Promise<FamilyStory[]> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/stories`, {
+      cache: 'no-store'
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch stories: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.stories || []
+  } catch (error) {
+    console.error('Error fetching stories:', error)
+    return []
+  }
+}
 
 export async function FamilyStories() {
-  const stories = await fetchFamilyStories()
+  const stories = await fetchStories()
 
   return (
     <div>
