@@ -6,8 +6,8 @@
   --font-family-serif: 'IBM Plex Serif', serif;
   --font-family-allura: 'Allura', cursive;
   
-  --color-primary: #F97316;
-  --color-primary-hover: #EA580C;
+  --color-primary: #FB923C;
+  --color-primary-hover: #F97316;
   --color-primary-light: #FFF7ED;
   
   --color-text-heading: #111827;
@@ -19,7 +19,7 @@
   --color-surface: #FFFFFF;
   --color-border: #E5E7EB;
   
-  --color-footer-bg: #FFEDD5;
+  --color-footer-bg: #FFF7ED;
   --color-footer-border: #FED7AA;
 }
 
