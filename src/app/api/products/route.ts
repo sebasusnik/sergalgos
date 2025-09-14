@@ -99,7 +99,7 @@ export async function GET() {
     const response = await fetch(csvUrl, {
       next: { 
         tags: ['products'],
-        revalidate: 300 // 5 minutes default cache
+        revalidate: 60 // 1 minute cache for faster updates
       },
       redirect: 'follow', // Explicitly follow redirects
       headers: {
