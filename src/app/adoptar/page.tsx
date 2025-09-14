@@ -1,5 +1,8 @@
 'use client'
 import { useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Input } from '../ui/components/input'
 import { Textarea } from '../ui/components/textarea'
 import { RadioGroup } from '../ui/components/radio-group'
@@ -8,26 +11,69 @@ import { FormField } from '../ui/components/form-field'
 import { Modal } from '../ui/components/modal'
 import { DropzoneUpload } from '../ui/components/image-uploader/dropzone-upload'
 
+const adoptionSchema = z.object({
+  fullName: z.string().min(1, 'El nombre es requerido.'),
+  dni: z.string().min(1, 'El DNI es requerido.'),
+  address: z.string().min(1, 'El domicilio es requerido.'),
+  neighborhood: z.string(),
+  city: z.string().min(1, 'La ciudad es requerida.'),
+  phone: z.string().min(1, 'El teléfono es requerido.'),
+  email: z.string().min(1, 'El email es requerido.').email('El formato del email es inválido.'),
+  socialMedia: z.string(),
+  q1: z.string().min(1, 'Respuesta requerida.'),
+  q2: z.string(),
+  q3: z.string().min(1, 'Respuesta requerida.'),
+  q4: z.string(),
+  q5: z.string(),
+  q6: z.string(),
+  q7: z.string(),
+  q8: z.string(),
+  q9: z.string().min(1, 'Respuesta requerida.'),
+  q10: z.string(),
+  q11: z.string().min(1, 'Respuesta requerida.'),
+  q12: z.string(),
+  q13: z.string(),
+  q14: z.string(),
+  q15: z.string(),
+  q16: z.string(),
+  q17: z.string(),
+  q18: z.string(),
+  q19: z.string(),
+  q20: z.string(),
+  q21: z.string(),
+  q22: z.string().min(1, 'Respuesta requerida.'),
+  q23: z.string().min(1, 'Respuesta requerida.'),
+  q24: z.string(),
+  q25: z.string().min(1, 'Respuesta requerida.')
+})
+
+type AdoptionFormData = z.infer<typeof adoptionSchema>
+
 export default function AdoptionPage(): React.ReactElement {
-  const [formData, setFormData] = useState({
-    // Personal Info
-    fullName: '',
-    dni: '',
-    address: '',
-    neighborhood: '',
-    city: '',
-    phone: '',
-    email: '',
-    socialMedia: '',
-    // Questions
-    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '', q9: '', q10: '',
-    q11: '', q12: '', q13: '', q14: '', q15: '', q16: '', q17: '', q18: '', q19: '',
-    q20: '', q21: '', q22: '', q23: '', q24: null as string | null, q25: ''
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting }
+  } = useForm<AdoptionFormData>({
+    resolver: zodResolver(adoptionSchema),
+    defaultValues: {
+      fullName: '',
+      dni: '',
+      address: '',
+      neighborhood: '',
+      city: '',
+      phone: '',
+      email: '',
+      socialMedia: '',
+      q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '', q9: '', q10: '',
+      q11: '', q12: '', q13: '', q14: '', q15: '', q16: '', q17: '', q18: '', q19: '',
+      q20: '', q21: '', q22: '', q23: '', q24: '', q25: ''
+    }
   })
+
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [fileError, setFileError] = useState<string>('')
 
   const questions = {
@@ -68,91 +114,19 @@ export default function AdoptionPage(): React.ReactElement {
     q25: '25. El traslado tiene un costo de $20.000. ¿Podrá abonarlo?'
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target
-    if (type === 'file') {
-      const target = e.target as HTMLInputElement
-      if (name === 'q24') {
-        // Handle multiple files for q24
-        const files = Array.from(target.files || [])
-        setUploadedFiles(files)
-        setFormData(prev => ({ ...prev, [name]: files.length > 0 ? 'Archivos adjuntos' : null }))
-      } else {
-        setFormData(prev => ({ ...prev, [name]: target.files?.[0] || null }))
-      }
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }))
-    }
-    // Clear error for the field being edited
-    if (formErrors[name]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[name]
-        return newErrors
-      })
-    }
-  }
 
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-    // Clear error for the field being edited
-    if (formErrors[name]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[name]
-        return newErrors
-      })
-    }
-  }
 
-  const validateForm = () => {
-    const errors: Record<string, string> = {}
-    // Basic validation: check if required fields are empty
-    if (!formData.fullName.trim()) errors.fullName = 'El nombre es requerido.'
-    if (!formData.dni.trim()) errors.dni = 'El DNI es requerido.'
-    if (!formData.address.trim()) errors.address = 'El domicilio es requerido.'
-    if (!formData.city.trim()) errors.city = 'La ciudad es requerida.'
-    if (!formData.phone.trim()) errors.phone = 'El teléfono es requerido.'
-    if (!formData.email.trim()) errors.email = 'El email es requerido.'
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = 'El formato del email es inválido.'
-    
-    // Validate a few key questions
-    if (!formData.q1.trim()) errors.q1 = 'Respuesta requerida.'
-    if (!formData.q3) errors.q3 = 'Respuesta requerida.'
-    if (!formData.q9.trim()) errors.q9 = 'Respuesta requerida.'
-    if (!formData.q11) errors.q11 = 'Respuesta requerida.'
-    if (!formData.q22) errors.q22 = 'Respuesta requerida.'
-    if (!formData.q23) errors.q23 = 'Respuesta requerida.'
-    if (!formData.q25) errors.q25 = 'Respuesta requerida.'
 
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) {
-      const firstErrorKey = Object.keys(formErrors)[0]
-      if (firstErrorKey) {
-        const errorElement = document.getElementById(firstErrorKey)
-        if(errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
-      }
-      return
-    }
-    
-    setIsSubmitting(true)
-
+  const onSubmit = async (data: AdoptionFormData) => {
     try {
       // Create FormData to send files
       const formDataToSend = new FormData()
       
       // Add all form fields
-      Object.keys(formData).forEach(key => {
-        if (formData[key as keyof typeof formData] !== null) {
-          formDataToSend.append(key, formData[key as keyof typeof formData] as string)
+      Object.keys(data).forEach(key => {
+        const value = data[key as keyof AdoptionFormData]
+        if (value !== null && value !== undefined) {
+          formDataToSend.append(key, value)
         }
       })
       
@@ -166,7 +140,7 @@ export default function AdoptionPage(): React.ReactElement {
 
       const response = await fetch('/api/adoptar', {
         method: 'POST',
-        body: formDataToSend, // Send as FormData instead of JSON
+        body: formDataToSend,
       })
 
       const result = await response.json()
@@ -179,8 +153,6 @@ export default function AdoptionPage(): React.ReactElement {
     } catch (error) {
       console.error('Error submitting form:', error)
       alert('Error al enviar el formulario. Por favor, inténtalo de nuevo.')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -202,51 +174,51 @@ export default function AdoptionPage(): React.ReactElement {
           <p className="text-gray-500 mt-2">Gracias por considerar darle un hogar a uno de nuestros rescatados.</p>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-4">
             {/* Personal Info Section */}
             <div className="space-y-4 p-5 border border-gray-200 rounded-lg">
               <h2 className="text-lg font-semibold border-b pb-2 mb-4">Datos Personales</h2>
               <FormField id="fullName" label={questions.fullName}>
-                <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} required />
-                {formErrors.fullName && <p className="text-red-500 text-xs">{formErrors.fullName}</p>}
+                <Input {...register('fullName')} id="fullName" />
+                {errors.fullName && <p className="text-red-500 text-xs">{errors.fullName.message}</p>}
               </FormField>
               <FormField id="dni" label={questions.dni}>
-                <Input id="dni" name="dni" value={formData.dni} onChange={handleChange} required />
-                {formErrors.dni && <p className="text-red-500 text-xs">{formErrors.dni}</p>}
+                <Input {...register('dni')} id="dni" />
+                {errors.dni && <p className="text-red-500 text-xs">{errors.dni.message}</p>}
               </FormField>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField id="address" label={questions.address}>
-                  <Input id="address" name="address" value={formData.address} onChange={handleChange} required />
-                  {formErrors.address && <div className="min-h-[20px]">
-                    <p className="text-red-500 text-xs pt-1">{formErrors.address}</p>
+                  <Input {...register('address')} id="address" />
+                  {errors.address && <div className="min-h-[20px]">
+                    <p className="text-red-500 text-xs pt-1">{errors.address.message}</p>
                   </div>}
                 </FormField>
                 <FormField id="neighborhood" label={questions.neighborhood}>
-                  <Input id="neighborhood" name="neighborhood" value={formData.neighborhood} onChange={handleChange} />
-                  {formErrors.address && <div className="min-h-[20px]" />}
+                  <Input {...register('neighborhood')} id="neighborhood" />
+                  <div className="min-h-[20px]" />
                 </FormField>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField id="city" label={questions.city}>
-                  <Input id="city" name="city" value={formData.city} onChange={handleChange} required />
-                  {formErrors.city && <div className="min-h-[20px]">
-                    <p className="text-red-500 text-xs pt-1">{formErrors.city}</p>
+                  <Input {...register('city')} id="city" />
+                  {errors.city && <div className="min-h-[20px]">
+                    <p className="text-red-500 text-xs pt-1">{errors.city.message}</p>
                   </div>}
                 </FormField>
                 <FormField id="phone" label={questions.phone}>
-                  <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} required />
-                  {formErrors.phone && <div className="min-h-[20px]">
-                    <p className="text-red-500 text-xs pt-1">{formErrors.phone}</p>
+                  <Input {...register('phone')} id="phone" type="tel" />
+                  {errors.phone && <div className="min-h-[20px]">
+                    <p className="text-red-500 text-xs pt-1">{errors.phone.message}</p>
                   </div>}
                 </FormField>
               </div>
               <FormField id="email" label={questions.email}>
-                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-                {formErrors.email && <p className="text-red-500 text-xs">{formErrors.email}</p>}
+                <Input {...register('email')} id="email" type="email" />
+                {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
               </FormField>
               <FormField id="socialMedia" label={questions.socialMedia}>
-                <Input id="socialMedia" name="socialMedia" value={formData.socialMedia} onChange={handleChange} />
+                <Input {...register('socialMedia')} id="socialMedia" />
               </FormField>
             </div>
 
@@ -255,152 +227,192 @@ export default function AdoptionPage(): React.ReactElement {
               <h2 className="text-lg font-semibold border-b pb-2 mb-4">Cuestionario</h2>
               
               <FormField id="q1" label={questions.q1}>
-                <Input id="q1" name="q1" type="number" value={formData.q1} onChange={handleChange} required />
-                {formErrors.q1 && <p className="text-red-500 text-xs">{formErrors.q1}</p>}
+                <Input {...register('q1')} id="q1" type="number" />
+                {errors.q1 && <p className="text-red-500 text-xs">{errors.q1.message}</p>}
               </FormField>
 
               <FormField id="q2" label={questions.q2}>
-                <Textarea id="q2" name="q2" value={formData.q2} onChange={handleChange} />
+                <Textarea {...register('q2')} id="q2" />
               </FormField>
 
               <FormField id="q3" label={questions.q3}>
-                <RadioGroup 
-                  name="q3" 
-                  options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
-                  selectedValue={formData.q3} 
-                  onChange={handleRadioChange} 
-                  required 
+                <Controller
+                  name="q3"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
+                    />
+                  )}
                 />
-                {formErrors.q3 && <p className="text-red-500 text-xs">{formErrors.q3}</p>}
+                {errors.q3 && <p className="text-red-500 text-xs">{errors.q3.message}</p>}
               </FormField>
 
               <FormField id="q4" label={questions.q4}>
-                <Textarea id="q4" name="q4" value={formData.q4} onChange={handleChange} />
+                <Textarea {...register('q4')} id="q4" />
               </FormField>
 
               <FormField id="q5" label={questions.q5}>
-                <Textarea id="q5" name="q5" value={formData.q5} onChange={handleChange} />
+                <Textarea {...register('q5')} id="q5" />
               </FormField>
 
               <FormField id="q6" label={questions.q6}>
-                <Textarea id="q6" name="q6" value={formData.q6} onChange={handleChange} />
+                <Textarea {...register('q6')} id="q6" />
               </FormField>
 
               <FormField id="q7" label={questions.q7}>
-                <Textarea id="q7" name="q7" value={formData.q7} onChange={handleChange} />
+                <Textarea {...register('q7')} id="q7" />
               </FormField>
 
               <FormField id="q8" label={questions.q8}>
-                <Textarea id="q8" name="q8" value={formData.q8} onChange={handleChange} />
+                <Textarea {...register('q8')} id="q8" />
               </FormField>
               
               <FormField id="q9" label={questions.q9}>
-                <Textarea id="q9" name="q9" value={formData.q9} onChange={handleChange} required />
-                {formErrors.q9 && <p className="text-red-500 text-xs">{formErrors.q9}</p>}
+                <Textarea {...register('q9')} id="q9" />
+                {errors.q9 && <p className="text-red-500 text-xs">{errors.q9.message}</p>}
               </FormField>
               
               <FormField id="q10" label={questions.q10}>
-                <Textarea id="q10" name="q10" value={formData.q10} onChange={handleChange} />
+                <Textarea {...register('q10')} id="q10" />
               </FormField>
               
               <FormField id="q11" label={questions.q11}>
-                <RadioGroup 
-                  name="q11" 
-                  options={[{value: 'Casa', label: 'Casa'}, {value: 'Departamento', label: 'Departamento'}]} 
-                  selectedValue={formData.q11} 
-                  onChange={handleRadioChange} 
-                  required 
+                <Controller
+                  name="q11"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Casa', label: 'Casa'}, {value: 'Departamento', label: 'Departamento'}]} 
+                    />
+                  )}
                 />
-                {formErrors.q11 && <p className="text-red-500 text-xs">{formErrors.q11}</p>}
+                {errors.q11 && <p className="text-red-500 text-xs">{errors.q11.message}</p>}
               </FormField>
 
               <FormField id="q12" label={questions.q12}>
-                <RadioGroup 
-                  name="q12" 
-                  options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
-                  selectedValue={formData.q12} 
-                  onChange={handleRadioChange} 
+                <Controller
+                  name="q12"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
+                    />
+                  )}
                 />
               </FormField>
 
               <FormField id="q13" label={questions.q13}>
-                <Textarea id="q13" name="q13" value={formData.q13} onChange={handleChange} />
+                <Textarea {...register('q13')} id="q13" />
               </FormField>
 
               <FormField id="q14" label={questions.q14}>
-                <Textarea id="q14" name="q14" value={formData.q14} onChange={handleChange} />
+                <Textarea {...register('q14')} id="q14" />
               </FormField>
 
               <FormField id="q15" label={questions.q15}>
-                <Textarea id="q15" name="q15" value={formData.q15} onChange={handleChange} />
+                <Textarea {...register('q15')} id="q15" />
               </FormField>
 
               <FormField id="q16" label={questions.q16}>
-                <Textarea id="q16" name="q16" value={formData.q16} onChange={handleChange} />
+                <Textarea {...register('q16')} id="q16" />
               </FormField>
 
               <FormField id="q17" label={questions.q17}>
-                <Textarea id="q17" name="q17" value={formData.q17} onChange={handleChange} />
+                <Textarea {...register('q17')} id="q17" />
               </FormField>
 
               <FormField id="q18" label={questions.q18}>
-                <Textarea id="q18" name="q18" value={formData.q18} onChange={handleChange} />
+                <Textarea {...register('q18')} id="q18" />
               </FormField>
 
               <FormField id="q19" label={questions.q19}>
-                <Textarea id="q19" name="q19" value={formData.q19} onChange={handleChange} />
+                <Textarea {...register('q19')} id="q19" />
               </FormField>
 
               <FormField id="q20" label={questions.q20}>
-                <Textarea id="q20" name="q20" value={formData.q20} onChange={handleChange} />
+                <Textarea {...register('q20')} id="q20" />
               </FormField>
 
               <FormField id="q21" label={questions.q21}>
-                <Textarea id="q21" name="q21" value={formData.q21} onChange={handleChange} />
+                <Textarea {...register('q21')} id="q21" />
               </FormField>
               
               <FormField id="q22" label={questions.q22}>
-                <RadioGroup 
-                  name="q22" 
-                  options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
-                  selectedValue={formData.q22} 
-                  onChange={handleRadioChange} 
-                  required 
+                <Controller
+                  name="q22"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
+                    />
+                  )}
                 />
-                {formErrors.q22 && <p className="text-red-500 text-xs">{formErrors.q22}</p>}
+                {errors.q22 && <p className="text-red-500 text-xs">{errors.q22.message}</p>}
               </FormField>
 
               <FormField id="q23" label={questions.q23}>
-                <RadioGroup 
-                  name="q23" 
-                  options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
-                  selectedValue={formData.q23} 
-                  onChange={handleRadioChange} 
-                  required 
+                <Controller
+                  name="q23"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
+                    />
+                  )}
                 />
-                {formErrors.q23 && <p className="text-red-500 text-xs">{formErrors.q23}</p>}
+                {errors.q23 && <p className="text-red-500 text-xs">{errors.q23.message}</p>}
               </FormField>
               
               <FormField id="q24" label={questions.q24}>
-                <DropzoneUpload
-                  files={uploadedFiles}
-                  onFilesChange={setUploadedFiles}
-                  error={fileError}
-                  onError={setFileError}
-                  maxSize={5 * 1024 * 1024} // 5MB
-                  maxFiles={10}
+                <Controller
+                  name="q24"
+                  control={control}
+                  render={({ field }) => (
+                    <DropzoneUpload
+                      files={uploadedFiles}
+                      onFilesChange={(files) => {
+                        setUploadedFiles(files)
+                        field.onChange(files.length > 0 ? 'Archivos adjuntos' : '')
+                      }}
+                      error={fileError}
+                      onError={setFileError}
+                      maxSize={5 * 1024 * 1024} // 5MB
+                      maxFiles={10}
+                    />
+                  )}
                 />
               </FormField>
               
               <FormField id="q25" label={questions.q25}>
-                <RadioGroup 
-                  name="q25" 
-                  options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
-                  selectedValue={formData.q25} 
-                  onChange={handleRadioChange} 
-                  required 
+                <Controller
+                  name="q25"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup 
+                      name={field.name}
+                      selectedValue={field.value}
+                      onChange={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      options={[{value: 'Sí', label: 'Sí'}, {value: 'No', label: 'No'}]} 
+                    />
+                  )}
                 />
-                {formErrors.q25 && <p className="text-red-500 text-xs">{formErrors.q25}</p>}
+                {errors.q25 && <p className="text-red-500 text-xs">{errors.q25.message}</p>}
               </FormField>
             </div>
 

@@ -1,12 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const donationSchema = z.object({
+  amount: z.number().min(100, 'El monto mínimo es $100').max(1000000, 'El monto máximo es $1.000.000'),
+  donationType: z.enum(['one-time', 'monthly']),
+  customAmount: z.string().optional(),
+})
+
+type DonationFormData = z.infer<typeof donationSchema>
 
 export default function DonarPage(): React.ReactElement {
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
-  const [customAmount, setCustomAmount] = useState<string>('')
-  const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
-
   const suggestedAmounts = [
     { amount: 5000, description: "Comida por una semana" },
     { amount: 10000, description: "Vacunas y desparasitación" },
@@ -14,30 +20,44 @@ export default function DonarPage(): React.ReactElement {
     { amount: 50000, description: "Castración y microchip" }
   ]
 
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting, isValid }
+  } = useForm<DonationFormData>({
+    resolver: zodResolver(donationSchema),
+    defaultValues: {
+      amount: 0,
+      donationType: 'one-time',
+      customAmount: ''
+    },
+    mode: 'onChange'
+  })
+
+  const watchAmount = watch('amount')
+  const watchDonationType = watch('donationType')
+  const watchCustomAmount = watch('customAmount')
+
   const handleAmountSelect = (amount: number) => {
-    setSelectedAmount(amount)
-    setCustomAmount('')
+    setValue('amount', amount, { shouldValidate: true })
+    setValue('customAmount', '')
   }
 
   const handleCustomAmountChange = (value: string) => {
-    setCustomAmount(value)
-    setSelectedAmount(null)
+    const numValue = parseInt(value) || 0
+    setValue('customAmount', value)
+    setValue('amount', numValue, { shouldValidate: true })
   }
 
-  const getCurrentAmount = () => {
-    if (customAmount) return parseInt(customAmount)
-    if (selectedAmount) return selectedAmount
-    return 0
-  }
-
-  const handleDonate = () => {
-    const amount = getCurrentAmount()
-    if (amount > 0) {
+  const onSubmit = async (data: DonationFormData) => {
+    try {
       // Aquí integrarías con MercadoPago
-      console.log(`Donating $${amount} - Type: ${donationType}`)
-      alert(`¡Gracias! Procesando donación de $${amount.toLocaleString()} (${donationType === 'monthly' ? 'mensual' : 'única'})`)
-    } else {
-      alert('Por favor seleccioná un monto para donar')
+      console.log('Donation data:', data)
+      alert(`¡Gracias! Procesando donación de $${data.amount.toLocaleString()} (${data.donationType === 'monthly' ? 'mensual' : 'única'})`)
+    } catch (error) {
+      console.error('Error processing donation:', error)
+      alert('Error procesando la donación. Por favor intentá de nuevo.')
     }
   }
 
@@ -54,7 +74,7 @@ export default function DonarPage(): React.ReactElement {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid md:grid-cols-2 gap-8">
           {/* Donation Options */}
           <div className="bg-surface rounded-xl border border-border p-6">
             <h2 className="font-sans font-bold text-2xl text-text-heading mb-6">
@@ -67,10 +87,11 @@ export default function DonarPage(): React.ReactElement {
               <div className="grid grid-cols-2 gap-3">
                 {suggestedAmounts.map(({ amount, description }) => (
                   <button
+                    type="button"
                     key={amount}
                     onClick={() => handleAmountSelect(amount)}
                     className={`p-3 border rounded-lg transition-colors text-center ${
-                      selectedAmount === amount
+                      watchAmount === amount && !watchCustomAmount
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-border hover:border-primary hover:bg-primary/5'
                     }`}
@@ -93,12 +114,17 @@ export default function DonarPage(): React.ReactElement {
                 </span>
                 <input
                   type="number"
-                  value={customAmount}
+                  value={watchCustomAmount}
                   onChange={(e) => handleCustomAmountChange(e.target.value)}
                   placeholder="Ingresá tu monto"
-                  className="flex-1 px-3 py-2 border border-border rounded-r-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+                  className={`flex-1 px-3 py-2 border rounded-r-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none ${
+                    errors.amount ? 'border-red-500' : 'border-border'
+                  }`}
                 />
               </div>
+              {errors.amount && (
+                <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>
+              )}
             </div>
 
             {/* Donation Type Toggle */}
@@ -106,9 +132,10 @@ export default function DonarPage(): React.ReactElement {
               <h3 className="font-medium text-text-heading mb-3">Tipo de donación</h3>
               <div className="flex gap-2 p-1 bg-background rounded-lg border border-border">
                 <button
-                  onClick={() => setDonationType('one-time')}
+                  type="button"
+                  onClick={() => setValue('donationType', 'one-time', { shouldValidate: true })}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    donationType === 'one-time'
+                    watchDonationType === 'one-time'
                       ? 'bg-primary text-text-on-primary'
                       : 'text-text-muted hover:text-text-heading'
                   }`}
@@ -116,9 +143,10 @@ export default function DonarPage(): React.ReactElement {
                   Una vez
                 </button>
                 <button
-                  onClick={() => setDonationType('monthly')}
+                  type="button"
+                  onClick={() => setValue('donationType', 'monthly', { shouldValidate: true })}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    donationType === 'monthly'
+                    watchDonationType === 'monthly'
                       ? 'bg-primary text-text-on-primary'
                       : 'text-text-muted hover:text-text-heading'
                   }`}
@@ -129,26 +157,35 @@ export default function DonarPage(): React.ReactElement {
             </div>
 
             {/* Amount Summary */}
-            {getCurrentAmount() > 0 && (
+            {watchAmount > 0 && (
               <div className="mb-4 p-3 bg-primary/10 border border-primary/20 rounded-lg">
                 <div className="text-center">
                   <span className="text-lg font-bold text-primary">
-                    ${getCurrentAmount().toLocaleString()}
+                    ${watchAmount.toLocaleString()}
                   </span>
                   <span className="text-sm text-text-muted ml-2">
-                    ({donationType === 'monthly' ? 'por mes' : 'donación única'})
+                    ({watchDonationType === 'monthly' ? 'por mes' : 'donación única'})
                   </span>
                 </div>
+              </div>
+            )}
+
+            {/* Form Validation Error */}
+            {Object.keys(errors).length > 0 && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">
+                  Por favor corregí los errores antes de continuar.
+                </p>
               </div>
             )}
 
             {/* MercadoPago Button */}
             <div className="space-y-3">
               <button 
-                onClick={handleDonate}
-                disabled={getCurrentAmount() === 0}
+                type="submit"
+                disabled={!isValid || isSubmitting || watchAmount === 0}
                 className={`w-full font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
-                  getCurrentAmount() > 0
+                  isValid && !isSubmitting && watchAmount > 0
                     ? 'bg-primary text-text-on-primary hover:bg-primary-hover'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
@@ -156,7 +193,7 @@ export default function DonarPage(): React.ReactElement {
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
-                {donationType === 'monthly' ? 'Suscribirse' : 'Donar'} con MercadoPago
+                {isSubmitting ? 'Procesando...' : `${watchDonationType === 'monthly' ? 'Suscribirse' : 'Donar'} con MercadoPago`}
               </button>
             </div>
           </div>
@@ -224,7 +261,7 @@ export default function DonarPage(): React.ReactElement {
               </div>
             </div>
           </div>
-        </div>
+        </form>
 
         {/* Additional Info */}
         <div className="mt-12 bg-surface rounded-xl border border-border p-6">
