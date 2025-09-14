@@ -6,6 +6,7 @@ import { fetchProductsFromSheet } from '../lib/google-sheets'
 import { Plus } from 'lucide-react'
 import Cart from '../components/cart'
 import { ColorSelector } from '../ui/components/color-selector'
+import { ImageCarousel } from '../ui/components/image-carousel'
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([])
@@ -96,17 +97,11 @@ export default function Shop() {
                 key={product.id}
                 className="bg-surface rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow relative"
               >
-                <div className="aspect-square bg-gray-100 relative overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = `https://placehold.co/300x300/F3F4F6/9CA3AF?text=${encodeURIComponent(product.name)}`
-                    }}
-                  />
-                </div>
+                <ImageCarousel
+                  images={product.images && product.images.length > 0 ? product.images : [product.image]}
+                  alt={product.name}
+                  className=""
+                />
                 
                 <div className="p-4 pb-16">
                   <h3 className="font-sans font-medium text-text-heading text-lg leading-6 mb-2">

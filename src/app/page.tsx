@@ -10,7 +10,7 @@ export default function Home(): React.ReactElement {
             <div className="px-4">
               <div className="relative flex flex-col justify-center min-h-[400px] md:flex-row md:items-center md:min-h-0">
                 {/* Text Content */}
-                <div className="w-full md:w-1/2 py-4 relative z-10 md:order-1">
+                <div className="flex flex-col justify-center md:gap-4 w-full md:w-1/2 py-4 relative z-10 md:order-1">
                   <div>
                     <h1 className="font-serif font-semibold text-[clamp(40px,8vw,60px)] leading-tight">
                       <span className="text-text-heading">
@@ -43,7 +43,7 @@ export default function Home(): React.ReactElement {
                   <img
                     src="/galgo-hero.png"
                     alt="Ilustración de un galgo"
-                    className="w-full h-auto max-h-[550px] object-contain"
+                    className="w-full h-auto max-h-[550px] object-contain object-left"
                   />
                 </div>
               </div>

@@ -11,6 +11,8 @@ interface CSVRow {
   precio?: string
   image?: string
   imagen?: string
+  images?: string
+  imagenes?: string
   description?: string
   descripcion?: string
   category?: string
@@ -26,7 +28,12 @@ function getMockProducts(): Product[] {
       id: '1',
       name: 'Collar para Galgo',
       price: 2500,
-      image: '/placeholder-collar.jpg',
+      image: 'https://acdn-us.mitiendanube.com/stores/001/125/556/products/75-c792d44499236a1d5417458984259730-1024-1024.webp',
+      images: [
+        'https://acdn-us.mitiendanube.com/stores/001/125/556/products/75-c792d44499236a1d5417458984259730-1024-1024.webp',
+        '/placeholder-collar-2.jpg',
+        '/placeholder-collar-3.jpg'
+      ],
       description: 'Collar especialmente diseñado para la anatomía única de los galgos. Cómodo y seguro.',
       category: 'accesorios',
       colors: mapColorsToHex(['Rojo', 'Azul', 'Negro', 'Marrón'])
@@ -128,11 +135,26 @@ export async function GET() {
           }
         }
         
+        // Parse images from CSV (expected format: "image1.jpg,image2.jpg,image3.jpg")
+        const imagesString = row.images || row.imagenes || ''
+        let images = undefined
+        
+        if (imagesString) {
+          try {
+            images = imagesString.split(',')
+              .map((url: string) => url.trim())
+              .filter(Boolean)
+          } catch (e) {
+            console.warn(`Error parsing images for product ${index + 1}:`, e)
+          }
+        }
+        
         return {
           id: row.id || `product-${index + 1}`,
           name: row.name || row.nombre || 'Producto sin nombre',
           price: parseFloat(row.price || row.precio || '0'),
           image: row.image || row.imagen || '/placeholder-product.jpg',
+          images,
           description: row.description || row.descripcion || '',
           category: row.category || row.categoria || 'general',
           colors
