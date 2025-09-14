@@ -30,7 +30,14 @@ export async function POST(request: NextRequest) {
     if (!tags || !Array.isArray(tags) || tags.length === 0) {
       return NextResponse.json(
         { error: 'Tags array is required' },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
       )
     }
 
@@ -66,7 +73,14 @@ export async function POST(request: NextRequest) {
     console.error('Revalidation webhook error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     )
   }
 }
