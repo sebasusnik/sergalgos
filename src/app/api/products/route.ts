@@ -100,6 +100,10 @@ export async function GET() {
       next: { 
         tags: ['products'],
         revalidate: 300 // 5 minutes default cache
+      },
+      redirect: 'follow', // Explicitly follow redirects
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-API/1.0)'
       }
     })
     
