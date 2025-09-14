@@ -1,15 +1,10 @@
 import { FamilyStory } from '../contexts/cart-context'
+import { GET } from '../api/stories/route'
 
 async function fetchStories(): Promise<FamilyStory[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/stories`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch stories: ${response.statusText}`)
-    }
-    
+    // Call the API route directly instead of making HTTP request
+    const response = await GET()
     const data = await response.json()
     return data.stories || []
   } catch (error) {

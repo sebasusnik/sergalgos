@@ -1,20 +1,11 @@
 import { ShopClient } from './shop-client'
 import { Product } from '../contexts/cart-context'
+import { GET } from '../api/products/route'
 
 async function fetchProducts(): Promise<Product[]> {
   try {
-    // Determinar la URL base correcta
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.statusText}`)
-    }
-    
+    // Call the API route directly instead of making HTTP request
+    const response = await GET()
     const data = await response.json()
     return data.products || []
   } catch (error) {
