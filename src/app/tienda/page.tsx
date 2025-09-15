@@ -1,3 +1,4 @@
+import Container from '../components/container'
 import { ShopClient } from './shop-client'
 import { Product } from '../contexts/cart-context'
 import { GET } from '../api/products/route'
@@ -19,7 +20,7 @@ export default async function Shop() {
 
   return (
     <div className="bg-background font-sans pb-20 md:pb-0">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <Container className="py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -44,7 +45,7 @@ export default async function Shop() {
             Todos los productos están seleccionados especialmente para las necesidades únicas de estos hermosos perros.
           </p>
         </section>
-      </div>
+      </Container>
     </div>
   )
 }

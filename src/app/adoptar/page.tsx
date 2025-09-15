@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import Container from '../components/container'
 import { Input } from '../ui/components/input'
 import { Textarea } from '../ui/components/textarea'
 import { RadioGroup } from '../ui/components/radio-group'
@@ -157,7 +158,7 @@ export default function AdoptionPage(): React.ReactElement {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 bg-white">
+    <div className="bg-background font-sans pb-20 md:pb-0">
       {showSuccessModal && (
         <Modal title="¡Formulario Enviado!" onClose={() => setShowSuccessModal(false)}>
           <p>¡Gracias por tu interés en adoptar!</p>
@@ -168,16 +169,23 @@ export default function AdoptionPage(): React.ReactElement {
           )}
         </Modal>
       )}
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Formulario de Preadopción</h1>
-          <p className="text-gray-500 mt-2">Gracias por considerar darle un hogar a uno de nuestros rescatados.</p>
+      <Container className="py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-serif font-semibold text-4xl text-text-heading mb-2">
+              Formulario de Preadopción
+            </h1>
+            <p className="text-text-muted">
+              Gracias por considerar darle un hogar a uno de nuestros rescatados.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="border border-border rounded-lg my-14 bg-neutral-50">
+          <div className="space-y-4 max-w-2xl mx-auto py-8" >
             {/* Personal Info Section */}
-            <div className="space-y-4 p-5 border border-gray-200 rounded-lg">
+            <div className="space-y-4 p-5 border border-gray-200 rounded-lg bg-white">
               <h2 className="text-lg font-semibold border-b pb-2 mb-4">Datos Personales</h2>
               <FormField id="fullName" label={questions.fullName}>
                 <Input {...register('fullName')} id="fullName" />
@@ -223,7 +231,7 @@ export default function AdoptionPage(): React.ReactElement {
             </div>
 
             {/* Questions Section */}
-            <div className="space-y-4 p-5 border border-gray-200 rounded-lg">
+            <div className="space-y-4 p-5 border border-gray-200 rounded-lg bg-white">
               <h2 className="text-lg font-semibold border-b pb-2 mb-4">Cuestionario</h2>
               
               <FormField id="q1" label={questions.q1}>
@@ -423,7 +431,7 @@ export default function AdoptionPage(): React.ReactElement {
             </div>
           </div>
         </form>
-      </div>
+      </Container>
     </div>
   )
 } 

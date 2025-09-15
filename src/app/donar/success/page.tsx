@@ -4,13 +4,15 @@ import Link from 'next/link'
 import { CheckCircle, Heart, Home, Info } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import Container from '../../components/container'
 
 function DonationSuccessContent() {
   const searchParams = useSearchParams()
   const isMockSubscription = searchParams.get('mock') === 'subscription'
   return (
-    <div className="bg-background font-sans min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md mx-auto text-center">
+    <div className="bg-background font-sans min-h-screen flex items-center justify-center">
+      <Container>
+        <div className="max-w-md mx-auto text-center">
         <div className="mb-6">
           {isMockSubscription ? (
             <>
@@ -106,7 +108,8 @@ function DonationSuccessContent() {
             </a>
           </p>
         </div>
-      </div>
+        </div>
+      </Container>
     </div>
   )
 }

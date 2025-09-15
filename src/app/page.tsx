@@ -1,10 +1,11 @@
 import Link from 'next/link'
+import Container from './components/container'
 import { FamilyStories } from './components/family-stories'
 
 export default function Home(): React.ReactElement {
   return (
     <div className="bg-background font-sans pb-20 md:pb-0">
-      <div className="max-w-5xl mx-auto">
+      <Container>
         <main>
           {/* Hero Section */}
           <section id="inicio" className="scroll-mt-20 relative overflow-hidden">
@@ -218,8 +219,7 @@ export default function Home(): React.ReactElement {
             </div>
           </section>
         </main>
-      </div>
-
+      </Container>
     </div>
   )
 }

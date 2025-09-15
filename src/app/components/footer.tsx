@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer id="contacto" className="bg-footer-bg text-text-heading py-12 scroll-mt-20">
+    <footer id="contacto" className="bg-footer-bg text-text-heading py-12 pb-32 md:pb-12 scroll-mt-20">
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="text-center">
             <img

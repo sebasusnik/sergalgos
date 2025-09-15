@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { Clock, Home, MessageCircle, RefreshCw } from 'lucide-react'
+import Container from '../../components/container'
 
 export default function DonationPendingPage() {
   return (
-    <div className="bg-background font-sans min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md mx-auto text-center">
+    <div className="bg-background font-sans min-h-screen flex items-center justify-center">
+      <Container>
+        <div className="max-w-md mx-auto text-center">
         <div className="mb-6">
           <Clock className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
           <h1 className="font-serif font-semibold text-3xl text-text-heading mb-2">
@@ -89,7 +91,8 @@ export default function DonationPendingPage() {
             </a>
           </p>
         </div>
-      </div>
+        </div>
+      </Container>
     </div>
   )
 }

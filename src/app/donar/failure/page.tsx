@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { XCircle, RefreshCw, Home, MessageCircle } from 'lucide-react'
+import Container from '../../components/container'
 
 export default function DonationFailurePage() {
   return (
-    <div className="bg-background font-sans min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md mx-auto text-center">
+    <div className="bg-background font-sans min-h-screen flex items-center justify-center">
+      <Container>
+        <div className="max-w-md mx-auto text-center">
         <div className="mb-6">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="font-serif font-semibold text-3xl text-text-heading mb-2">
@@ -67,7 +69,8 @@ export default function DonationFailurePage() {
             Revisa los datos bancarios en la página de donaciones.
           </p>
         </div>
-      </div>
+        </div>
+      </Container>
     </div>
   )
 }

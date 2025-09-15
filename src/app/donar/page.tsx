@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState } from 'react'
+import Container from '../components/container'
 
 const donationSchema = z.object({
   amount: z.number().min(100, 'El monto mínimo es $100').max(1000000, 'El monto máximo es $1.000.000'),
@@ -91,7 +92,7 @@ export default function DonarPage(): React.ReactElement {
 
   return (
     <div className="bg-background font-sans pb-20 md:pb-0">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <Container className="py-8">
         <div className="mb-8">
           <h1 className="font-serif font-semibold text-4xl text-text-heading mb-4">
             Ayudanos a salvar más galgos
@@ -326,7 +327,7 @@ export default function DonarPage(): React.ReactElement {
             </a>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   )
 }

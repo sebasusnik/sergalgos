@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     // Create preference for one-time donations
     if (donationType === 'one-time') {
       const preference = new Preference(client)
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
 
       const preferenceData = {
         items: [
@@ -55,12 +56,12 @@ export async function POST(request: NextRequest) {
           installments: 12
         },
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/success`,
-          failure: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/failure`,
-          pending: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/donar/pending`
+          success: `${baseUrl}/donar/success`,
+          failure: `${baseUrl}/donar/failure`,
+          pending: `${baseUrl}/donar/pending`
         },
         // auto_return: 'approved',
-        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/donations/webhook`,
+        notification_url: `${baseUrl}/api/donations/webhook`,
         external_reference: `donation_${Date.now()}`,
         expires: true,
         expiration_date_from: new Date().toISOString(),
@@ -104,11 +105,17 @@ export async function POST(request: NextRequest) {
       const preApproval = new PreApproval(client)
 
       // Create subscription data for MercadoPago PreApproval
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
+      
       const subscriptionData = {
         reason: `Donación mensual de $${amount} - Ser Galgos`,
         external_reference: `monthly_donation_${Date.now()}`,
         payer_email: donorInfo?.email || 'test_user_123@testuser.com',
-        back_url: `${process.env.NEXT_PUBLIC_BASE_URL}/donar/success`,
+        back_urls: {
+          success: `${baseUrl}/donar/success`,
+          failure: `${baseUrl}/donar/failure`,
+          pending: `${baseUrl}/donar/pending`
+        },
         auto_recurring: {
           frequency: 1,
           frequency_type: 'months',
