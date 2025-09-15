@@ -35,6 +35,18 @@ export async function POST(request: NextRequest) {
       const preference = new Preference(client)
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
 
+      // Validate baseUrl
+      if (!baseUrl || baseUrl.includes('undefined')) {
+        console.error('Invalid baseUrl:', baseUrl)
+        return NextResponse.json(
+          { error: 'URL base no configurada correctamente' },
+          { status: 500 }
+        )
+      }
+
+      // Ensure baseUrl starts with http/https
+      const validBaseUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`
+
       const preferenceData = {
         items: [
           {
@@ -56,12 +68,12 @@ export async function POST(request: NextRequest) {
           installments: 12
         },
         back_urls: {
-          success: `${baseUrl}/donar/success`,
-          failure: `${baseUrl}/donar/failure`,
-          pending: `${baseUrl}/donar/pending`
+          success: `${validBaseUrl}/donar/success`,
+          failure: `${validBaseUrl}/donar/failure`,
+          pending: `${validBaseUrl}/donar/pending`
         },
         // auto_return: 'approved',
-        notification_url: `${baseUrl}/api/donations/webhook`,
+        notification_url: `${validBaseUrl}/api/donations/webhook`,
         external_reference: `donation_${Date.now()}`,
         expires: true,
         expiration_date_from: new Date().toISOString(),
@@ -107,14 +119,28 @@ export async function POST(request: NextRequest) {
       // Create subscription data for MercadoPago PreApproval
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
       
+      // Validate baseUrl
+      if (!baseUrl || baseUrl.includes('undefined')) {
+        console.error('Invalid baseUrl:', baseUrl)
+        return NextResponse.json(
+          { error: 'URL base no configurada correctamente' },
+          { status: 500 }
+        )
+      }
+
+      // Ensure baseUrl starts with http/https
+      const validBaseUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`
+      
+      console.log('Creating subscription with baseUrl:', validBaseUrl)
+      
       const subscriptionData = {
         reason: `Donación mensual de $${amount} - Ser Galgos`,
         external_reference: `monthly_donation_${Date.now()}`,
         payer_email: donorInfo?.email || 'test_user_123@testuser.com',
         back_urls: {
-          success: `${baseUrl}/donar/success`,
-          failure: `${baseUrl}/donar/failure`,
-          pending: `${baseUrl}/donar/pending`
+          success: `${validBaseUrl}/donar/success`,
+          failure: `${validBaseUrl}/donar/failure`,
+          pending: `${validBaseUrl}/donar/pending`
         },
         auto_recurring: {
           frequency: 1,
@@ -125,6 +151,8 @@ export async function POST(request: NextRequest) {
           currency_id: 'ARS'
         }
       }
+
+      console.log('Subscription data:', JSON.stringify(subscriptionData, null, 2))
 
       const subscription = await preApproval.create({ body: subscriptionData })
 
