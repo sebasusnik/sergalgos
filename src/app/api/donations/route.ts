@@ -133,9 +133,18 @@ export async function POST(request: NextRequest) {
       
       console.log('Creating subscription with baseUrl:', validBaseUrl)
       
+      // Determine payer email - use test user for sandbox or actual donor email
+      const isProduction = process.env.MERCADOPAGO_ACCESS_TOKEN?.includes('APP_USR_')
+      const payerEmail = donorInfo?.email || (isProduction ? 'donante@sergalgos.com' : 'test_user_123@testuser.com')
+      
+      console.log('Environment:', isProduction ? 'Production' : 'Sandbox')
+      console.log('Payer email:', payerEmail)
+      console.log('Donor info:', donorInfo)
+      
       const subscriptionData = {
         reason: `Donación mensual de $${amount} - Ser Galgos`,
         external_reference: `monthly_donation_${Date.now()}`,
+        payer_email: payerEmail,
         back_url: `${validBaseUrl}/donar/success`, // PreApproval uses back_url (singular)
         auto_recurring: {
           frequency: 1,
