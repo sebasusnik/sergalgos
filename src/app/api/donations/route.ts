@@ -137,11 +137,7 @@ export async function POST(request: NextRequest) {
         reason: `Donación mensual de $${amount} - Ser Galgos`,
         external_reference: `monthly_donation_${Date.now()}`,
         payer_email: donorInfo?.email || 'test_user_123@testuser.com',
-        back_urls: {
-          success: `${validBaseUrl}/donar/success`,
-          failure: `${validBaseUrl}/donar/failure`,
-          pending: `${validBaseUrl}/donar/pending`
-        },
+        back_url: `${validBaseUrl}/donar/success`, // PreApproval uses back_url (singular)
         auto_recurring: {
           frequency: 1,
           frequency_type: 'months',
