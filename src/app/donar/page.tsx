@@ -10,6 +10,10 @@ const donationSchema = z.object({
   amount: z.number().min(100, 'El monto mínimo es $100').max(1000000, 'El monto máximo es $1.000.000'),
   donationType: z.enum(['one-time', 'monthly']),
   customAmount: z.string().optional(),
+  email: z.string().email('Ingresá un email válido').min(1, 'El email es requerido'),
+  name: z.string().optional().refine((val) => !val || val.length >= 2, {
+    message: 'El nombre debe tener al menos 2 caracteres'
+  }),
 })
 
 type DonationFormData = z.infer<typeof donationSchema>
@@ -26,6 +30,7 @@ export default function DonarPage(): React.ReactElement {
 
   const {
     handleSubmit,
+    register,
     watch,
     setValue,
     formState: { errors, isSubmitting, isValid }
@@ -34,7 +39,9 @@ export default function DonarPage(): React.ReactElement {
     defaultValues: {
       amount: 0,
       donationType: 'one-time',
-      customAmount: ''
+      customAmount: '',
+      email: '',
+      name: ''
     },
     mode: 'onChange'
   })
@@ -67,9 +74,8 @@ export default function DonarPage(): React.ReactElement {
           amount: data.amount,
           donationType: data.donationType,
           donorInfo: {
-            // You could extend the form to collect donor info
-            name: 'Donante Anónimo',
-            email: 'donante@example.com'
+            name: data.name || 'Donante Anónimo',
+            email: data.email
           }
         }),
       })
@@ -182,6 +188,48 @@ export default function DonarPage(): React.ReactElement {
                 >
                   Mensual
                 </button>
+              </div>
+            </div>
+
+            {/* Donor Information */}
+            <div className="mb-6">
+              <h3 className="font-medium text-text-heading mb-3">Información del donante</h3>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-text-heading mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    {...register('email')}
+                    placeholder="tu@email.com"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none ${
+                      errors.email ? 'border-red-500' : 'border-border'
+                    }`}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-text-heading mb-2">
+                    Nombre (opcional)
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    {...register('name')}
+                    placeholder="Tu nombre"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none ${
+                      errors.name ? 'border-red-500' : 'border-border'
+                    }`}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  )}
+                </div>
               </div>
             </div>
 
