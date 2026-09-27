@@ -101,3 +101,7 @@ This project aims to help greyhounds find homes. Contributions are welcome to im
 ## License
 
 This project is private and maintained for the Ser Galgos organization.
+
+---
+
+Made by [Sebastián Sušnik](https://susnik.dev).
